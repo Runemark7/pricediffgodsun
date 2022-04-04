@@ -1,8 +1,19 @@
 import requests
 
+URLethPrice = "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD"
+URLgodsPrice = "https://min-api.cryptocompare.com/data/price?fsym=gods&tsyms=USD"
+getEthPrice = requests.get(URLethPrice)
+getGodsPrice = requests.get(URLgodsPrice)
+
+ethPrice = getEthPrice.json()['USD']
+godsPrice = getGodsPrice.json()['USD']
+
 itemsName = [  # %20
     "Celestial%20stag",
+    "Faeflame%20Blade",
     "falling%20star",
+    "Lightning%20Strike",
+    "Marsh%20Walker",
     "sudden%20bloom",
     "Sole%20Survivor",
     "Armor%20Lurker",
@@ -20,7 +31,6 @@ itemsName = [  # %20
     "The%20Hollow",
     "Radiant%20Dawn",
     "Grand%20Hall",
-    "Shackled%20Acolyte",
 ]
 
 resultList = []
@@ -44,9 +54,6 @@ class ResultObj:
         print(self.godsVal)
         print(self.diff)
 
-
-ethPrice = 2800.0
-godsPrice = 2.14
 for name in itemsName:
     URL = "https://api.x.immutable.com/v1/orders?buy_token_type=ETH&direction=asc&include_fees=true&order_by=buy_quantity&page_size=48&sell_token_address=0xacb3c6a43d15b907e8433077b6d38ae40936fe2c&sell_token_name=" + name + "&sell_token_type=ERC721&status=active"
     page = requests.get(URL)
@@ -93,7 +100,9 @@ for name in itemsName:
         godsVal = float(price)*godsPrice
         break
 
-    diff = godsVal / ethVal - 1
+    diff = 0.0
+    if ethVal > 0:
+        diff = (godsVal / ethVal) - 1
     resultList.append(ResultObj(name, ethVal, godsVal, diff))
 
 
